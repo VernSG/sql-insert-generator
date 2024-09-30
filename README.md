@@ -13,7 +13,7 @@ A simple tool to generate SQL `INSERT` statements for product entries in an inve
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/SQL-Insert-Generator.git
+   git clone https://github.com/VernSG/SQL-Insert-Generator.git
    cd SQL-Insert-Generator
 
 2. **Run**
