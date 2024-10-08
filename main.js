@@ -1,7 +1,14 @@
-function generateInsertStatements(nama_barang, id_awal, harga_awal, harga_akhir, kenaikan) {
-  const id_barang_prefix = "BR";
+const fs = require("fs");
+function generateInsertStatements(
+  nama_barang,
+  id_awal,
+  harga_awal,
+  harga_akhir,
+  kenaikan
+) {
+  const id_barang_prefix = "CS";
   const id_kategori = 8;
-  const merk = "Apple";
+  const merk = nama_barang.split(" ")[0];
   const harga_beli = 0;
   const satuan_barang = "PCS";
   const stok = 100;
@@ -12,7 +19,7 @@ function generateInsertStatements(nama_barang, id_awal, harga_awal, harga_akhir,
   let id = id_awal;
 
   while (current_harga <= harga_akhir) {
-    const id_barang = `${id_barang_prefix}${String(id).padStart(3, '0')}`;
+    const id_barang = `${id_barang_prefix}${String(id).padStart(3, "0")}`;
     const statement = `(${id}, '${id_barang}', ${id_kategori}, '${nama_barang}', '${merk}', ${harga_beli}, ${current_harga}, '${satuan_barang}', ${stok}, '${tgl_input}', NULL)`;
     insertStatements.push(statement);
 
@@ -24,34 +31,45 @@ function generateInsertStatements(nama_barang, id_awal, harga_awal, harga_akhir,
 }
 
 // Menginput data dari user
-const readline = require('readline').createInterface({
+const readline = require("readline").createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 // Pertama, meminta input untuk nama barang dan ID awal
-readline.question('Masukkan nama barang (pisahkan dengan koma): ', (input) => {
-  const items = input.split(',').map(item => item.trim());
+readline.question("Masukkan nama barang (pisahkan dengan koma): ", (input) => {
+  const items = input.split(",").map((item) => item.trim());
 
-  readline.question('Masukkan ID awal: ', (id_awal) => {
+  readline.question("Masukkan ID awal: ", (id_awal) => {
     const harga_awal = 10000; // Harga mulai
     const harga_akhir = 65000; // Harga akhir
     const kenaikan = 5000; // Kenaikan harga
-    
+
     const insertStatements = [];
     let id = parseInt(id_awal); // Menggunakan ID awal dari input
 
-    items.forEach(nama_barang => {
+    items.forEach((nama_barang) => {
       // Generate insert statements untuk setiap nama barang
-      const statements = generateInsertStatements(nama_barang.trim(), id, harga_awal, harga_akhir, kenaikan);
+      const statements = generateInsertStatements(
+        nama_barang.trim(),
+        id,
+        harga_awal,
+        harga_akhir,
+        kenaikan
+      );
       insertStatements.push(statements);
-      
+
       // Update ID untuk item berikutnya
       id += Math.floor((harga_akhir - harga_awal) / kenaikan) + 1; // Update ID untuk setiap barang
     });
 
-    console.log("\nINSERT INTO `barang` (`id`, `id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `tgl_input`, `tgl_update`) VALUES");
+    console.log(
+      "\nINSERT INTO `barang` (`id`, `id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `tgl_input`, `tgl_update`) VALUES"
+    );
     console.log(insertStatements.join(",\n") + ";");
+
+    // Create a file for making copy-paste easier
+    fs.writeFileSync("output.txt", insertStatements.join(",\n") + ";");
 
     readline.close();
   });
