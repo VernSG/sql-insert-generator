@@ -1,7 +1,8 @@
+const fs = require('fs');
 function generateInsertStatements(nama_barang, id_awal, harga_awal, harga_akhir, kenaikan) {
   const id_barang_prefix = "BR";
-  const id_kategori = 8;
-  const merk = "Apple";
+  const id_kategori = 9;
+  const merk = "Redmi (TG)";
   const harga_beli = 0;
   const satuan_barang = "PCS";
   const stok = 100;
@@ -34,8 +35,8 @@ readline.question('Masukkan nama barang (pisahkan dengan koma): ', (input) => {
   const items = input.split(',').map(item => item.trim());
 
   readline.question('Masukkan ID awal: ', (id_awal) => {
-    const harga_awal = 10000; // Harga mulai
-    const harga_akhir = 65000; // Harga akhir
+    const harga_awal = 15000; // Harga mulai
+    const harga_akhir = 45000; // Harga akhir
     const kenaikan = 5000; // Kenaikan harga
     
     const insertStatements = [];
@@ -50,8 +51,11 @@ readline.question('Masukkan nama barang (pisahkan dengan koma): ', (input) => {
       id += Math.floor((harga_akhir - harga_awal) / kenaikan) + 1; // Update ID untuk setiap barang
     });
 
+    let out_header = "\nINSERT INTO `barang` (`id`, `id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `tgl_input`, `tgl_update`) VALUES\n"
     console.log("\nINSERT INTO `barang` (`id`, `id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `tgl_input`, `tgl_update`) VALUES");
     console.log(insertStatements.join(",\n") + ";");
+
+    fs.writeFileSync("output.txt", insertStatements.join(",\n") + ";")
 
     readline.close();
   });
